@@ -11,6 +11,8 @@ use Illuminate\Routing\Redirector;
 
 class AuthService
 {
+    const OIDC_USER_INFO_URL = 'https://auth-demo.brainwave-software.com/realms/demorealm/protocol/openid-connect/userinfo';
+
     /**
      * @return \Illuminate\Contracts\Foundation\Application|RedirectResponse|Redirector
      */
@@ -46,7 +48,7 @@ class AuthService
             return redirect('/')->withErrors(['token' => 'The token is not active.']);
         }
 
-        $oidcUser = Http::withToken($response['access_token'])->get('https://auth-demo.brainwave-software.com/realms/demorealm/protocol/openid-connect/userinfo')->json();
+        $oidcUser = Http::withToken($response['access_token'])->get(AuthService::OIDC_USER_INFO_URL)->json();
 
         $user = User::firstOrCreate(
             ['email' => $oidcUser['email']],
